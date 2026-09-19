@@ -106,3 +106,21 @@ STAFF → Web Server HTTP/HTTPS  ALLOW
 STAFF → Other Server traffic   DENY
 
 GUEST → Internal networks      DENY
+```
+
+---
+
+### Future Scalability
+
+The current addressing plan is designed so the lab can be expanded without changing the existing HQ addressing scheme.
+
+Possible future extensions include:
+
+- Site-to-Site VPN between HQ and Branch
+- Hub-and-Spoke VPN with HQ acting as the central hub
+- Additional Branch offices using separate `10.20.x.0/24`, `10.30.x.0/24`, `10.40.x.0/24` address spaces
+- GRE over IPsec to support dynamic routing across encrypted tunnels
+- OSPF over GRE/IPsec
+- DMVPN-style hub-and-spoke design in a more advanced lab
+- Secondary WAN links for branch redundancy
+- Firewall integration at HQ and Branch sites
