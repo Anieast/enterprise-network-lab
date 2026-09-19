@@ -1,0 +1,73 @@
+hostname BR-Router
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet0/0
+ description TO_ISP
+ ip address 10.255.0.6 255.255.255.252
+ ip nat outside
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/1
+ description TO_BRANCH_LAN
+ no ip address
+ ip nat inside
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/1.210
+ encapsulation dot1Q 210
+ ip address 10.20.10.1 255.255.255.0
+ ip access-group BRANCH-STAFF-IN in
+!
+interface GigabitEthernet0/1.220
+ encapsulation dot1Q 220
+ ip address 10.20.20.1 255.255.255.0
+ ip access-group BRANCH-GUEST-IN in
+!
+interface GigabitEthernet0/2
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+router ospf 1
+ router-id 4.4.4.4
+ log-adjacency-changes
+ network 10.255.0.4 0.0.0.3 area 0
+ network 10.20.10.0 0.0.0.255 area 0
+ network 10.20.20.0 0.0.0.255 area 0
+!
+ip nat inside source list 20 interface GigabitEthernet0/0 overload
+ip classless
+ip route 0.0.0.0 0.0.0.0 10.255.0.5 
+!
+ip flow-export version 9
+!
+!
+ip access-list extended BRANCH-STAFF-IN
+ remark Allow HTTP HTTPS to HQ Web Server
+ permit tcp 10.20.10.0 0.0.0.255 host 10.10.30.20 eq www
+ permit tcp 10.20.10.0 0.0.0.255 host 10.10.30.20 eq 443
+ remark Deny other access to HQ Server VLAN
+ deny ip 10.20.10.0 0.0.0.255 10.10.30.0 0.0.0.255
+ remark Allow remaining traffic
+ permit ip 10.20.10.0 0.0.0.255 any
+ip access-list extended BRANCH-GUEST-IN
+ deny ip 10.20.20.0 0.0.0.255 10.0.0.0 0.255.255.255
+ deny ip 10.20.20.0 0.0.0.255 172.16.0.0 0.15.255.255
+ deny ip 10.20.20.0 0.0.0.255 192.168.0.0 0.0.255.255
+ permit ip 10.20.20.0 0.0.0.255 any
+access-list 20 permit 10.20.0.0 0.0.255.255
+!
+end

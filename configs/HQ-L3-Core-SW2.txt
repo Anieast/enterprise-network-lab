@@ -1,0 +1,163 @@
+hostname HQ-CORE-SW2
+!
+vtp mode transparent
+!
+spanning-tree mode rapid-pvst
+spanning-tree vlan 110,120,130,140 priority 28672
+!
+!
+!
+!
+!
+!
+vlan 110
+ name IT
+!
+vlan 120
+ name STAFF
+!
+vlan 130
+ name SERVER
+!
+vlan 140
+ name GUEST
+!
+interface Port-channel1
+ switchport trunk allowed vlan 110,120,130,140
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface FastEthernet0/1
+ switchport trunk allowed vlan 110,120,130,140
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface FastEthernet0/2
+ switchport trunk allowed vlan 110,120,130,140
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface FastEthernet0/3
+!
+interface FastEthernet0/4
+!
+interface FastEthernet0/5
+!
+interface FastEthernet0/6
+!
+interface FastEthernet0/7
+!
+interface FastEthernet0/8
+!
+interface FastEthernet0/9
+!
+interface FastEthernet0/10
+!
+interface FastEthernet0/11
+!
+interface FastEthernet0/12
+!
+interface FastEthernet0/13
+!
+interface FastEthernet0/14
+!
+interface FastEthernet0/15
+!
+interface FastEthernet0/16
+!
+interface FastEthernet0/17
+!
+interface FastEthernet0/18
+!
+interface FastEthernet0/19
+!
+interface FastEthernet0/20
+!
+interface FastEthernet0/21
+!
+interface FastEthernet0/22
+!
+interface FastEthernet0/23
+ switchport trunk allowed vlan 110,120,130,140
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ channel-group 1 mode active
+!
+interface FastEthernet0/24
+ switchport trunk allowed vlan 110,120,130,140
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ channel-group 1 mode active
+!
+interface GigabitEthernet0/1
+!
+interface GigabitEthernet0/2
+ description TO_HQ_ROUTER_G0/2
+ no switchport
+ ip address 10.255.10.5 255.255.255.252
+ duplex auto
+ speed auto
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+interface Vlan110
+ mac-address 00d0.bcec.3501
+ ip address 10.10.10.2 255.255.255.0
+ ip helper-address 10.10.30.10
+ standby 110 ip 10.10.10.254
+ standby 110 preempt
+!
+interface Vlan120
+ mac-address 00d0.bcec.3502
+ ip address 10.10.20.2 255.255.255.0
+ ip helper-address 10.10.30.10
+ standby 120 ip 10.10.20.254
+ standby 120 preempt
+!
+interface Vlan130
+ mac-address 00d0.bcec.3503
+ ip address 10.10.30.2 255.255.255.0
+ standby 130 ip 10.10.30.254
+ standby 130 preempt
+!
+interface Vlan140
+ mac-address 00d0.bcec.3504
+ ip address 10.10.40.2 255.255.255.0
+ ip helper-address 10.10.30.10
+ standby 140 ip 10.10.40.254
+ standby 140 preempt
+!
+router ospf 1
+ router-id 1.1.1.2
+ log-adjacency-changes
+ network 10.255.10.4 0.0.0.3 area 0
+ network 10.10.10.0 0.0.0.255 area 0
+ network 10.10.20.0 0.0.0.255 area 0
+ network 10.10.30.0 0.0.0.255 area 0
+ network 10.10.40.0 0.0.0.255 area 0
+!
+ip classless
+!
+ip flow-export version 9
+!
+!
+ip access-list extended GUEST-IN
+ remark Block Guest access to internal networks
+ deny ip 10.10.40.0 0.0.0.255 10.0.0.0 0.255.255.255
+ remark Allow all other traffic
+ permit ip 10.10.40.0 0.0.0.255 any
+ip access-list extended STAFF-IN
+ remark Allow DNS to internal DNS
+ permit udp 10.10.20.0 0.0.0.255 host 10.10.30.10 eq domain
+ permit tcp 10.10.20.0 0.0.0.255 host 10.10.30.10 eq domain
+ remark Allow web access to Web Server
+ permit tcp 10.10.20.0 0.0.0.255 host 10.10.30.20 eq www
+ permit tcp 10.10.20.0 0.0.0.255 host 10.10.30.20 eq 443
+ remark Deny all other access to Server VLAN
+ deny ip 10.10.20.0 0.0.0.255 10.10.30.0 0.0.0.255
+ remark Allow Staff to other destinations
+ permit ip 10.10.20.0 0.0.0.255 any
+!
+end
