@@ -8,7 +8,7 @@ Branch
 VLAN 210 STAFF   10.20.10.0/24
 VLAN 220 GUEST   10.20.20.0/24
 
-WAN HQ ↔ ISP
+HQ Router ↔ ISP
 10.255.0.0/30
 
 HQ Router ↔ HQ Core

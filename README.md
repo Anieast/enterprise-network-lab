@@ -34,7 +34,7 @@ gateway redundancy.
 
 ## Network Topology
 
-[Topology diagram]
+[Topology diagram] (https://github.com/Anieast/enterprise-network-lab/blob/main/topology/Network%20topo.png)
 
 ## Implementation
 
